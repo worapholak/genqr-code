@@ -1,40 +1,18 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { TextField, Box, Typography, Snackbar, IconButton, Button, ToggleButtonGroup, ToggleButton, Tooltip } from '@mui/material';
 import { QRCodeSVG } from 'qrcode.react';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DownloadIcon from '@mui/icons-material/Download';
 import ColorLensIcon from '@mui/icons-material/ColorLens';
+import QrCode2Icon from '@mui/icons-material/QrCode2';
 
-const flowerImages = [
-  'https://cdn.pixabay.com/photo/2016/03/16/21/25/chamomile-1261796_1280.jpg',
-  'https://cdn.pixabay.com/photo/2020/05/28/19/01/daisies-5232284_1280.jpg',
-  'https://cdn.pixabay.com/photo/2024/02/13/22/20/flower-meadow-8572000_960_720.jpg',
-  'https://cdn.pixabay.com/photo/2018/05/23/23/10/daisies-3425426_1280.jpg',
-  'https://cdn.pixabay.com/photo/2020/05/04/07/49/flower-5128200_1280.jpg'
-];
-
-const primaryColor = '#F9A825';
-const secondaryColor = '#FFF9C4';
-const textColor = '#FFFFFF';
-
-const buttonStyle = {
-  borderRadius: '12px',
-  padding: '12px',
-  backgroundColor: primaryColor,
-  color: textColor,
-  fontFamily: "'Kanit', sans-serif",
-  fontWeight: 'bold',
-  fontSize: '16px',
-  textTransform: 'none',
-  marginBottom: '20px',
-  transition: 'all 0.3s ease',
-  '&:hover': {
-    backgroundColor: secondaryColor,
-    color: primaryColor,
-    boxShadow: `0 4px 8px ${primaryColor}4D`,
-    transform: 'translateY(-2px)',
-  },
-};
+const primaryColor = '#1e3a5f';
+const secondaryColor = '#2d5a87';
+const accentColor = '#4a90d9';
+const bgColor = '#f5f7fa';
+const cardBg = '#ffffff';
+const textPrimary = '#1a1a2e';
+const textSecondary = '#6b7280';
 
 function App() {
   const [url, setUrl] = useState('');
@@ -42,21 +20,7 @@ function App() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [qrSize, setQrSize] = useState('medium');
-  const [qrColor, setQrColor] = useState(primaryColor);
-  const [backgroundImage, setBackgroundImage] = useState(flowerImages[0]);
-
-  const getRandomImage = useCallback(() => {
-    const randomIndex = Math.floor(Math.random() * flowerImages.length);
-    return flowerImages[randomIndex];
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setBackgroundImage(getRandomImage());
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, [getRandomImage]);
+  const [qrColor, setQrColor] = useState('#000000');
 
   const handleGenerateClick = useCallback(() => {
     if (url.trim() !== '') {
@@ -87,7 +51,7 @@ function App() {
       ctx.drawImage(img, 0, 0);
       const pngFile = canvas.toDataURL('image/png');
       const downloadLink = document.createElement('a');
-      downloadLink.download = 'floral_qrcode.png';
+      downloadLink.download = 'qrcode.png';
       downloadLink.href = pngFile;
       downloadLink.click();
       setSnackbarMessage('ดาวน์โหลด QR Code สำเร็จ');
@@ -113,193 +77,311 @@ function App() {
   return (
     <Box
       className="min-h-screen flex items-center justify-center p-4 sm:p-6"
-      style={{
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        transition: 'background-image 1s ease-in-out',
+      sx={{
+        background: `linear-gradient(135deg, ${bgColor} 0%, #e8eef5 100%)`,
+        minHeight: '100vh',
       }}
     >
       <Box
-        className="p-6 sm:p-8 rounded-3xl shadow-2xl w-full max-w-md sm:max-w-lg md:max-w-xl relative overflow-hidden"
-        style={{
-          background: 'rgba(255, 255, 255, 0.85)',
-          backdropFilter: 'blur(10px)',
-          border: `1px solid ${primaryColor}`,
-          boxShadow: `0 10px 30px ${primaryColor}4D`,
+        sx={{
+          width: '100%',
+          maxWidth: '480px',
+          backgroundColor: cardBg,
+          borderRadius: '16px',
+          boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
+          border: '1px solid #e5e7eb',
+          overflow: 'hidden',
         }}
       >
-        <TextField
-          fullWidth
-          label="กรอก URL"
-          variant="outlined"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
+        {/* Header */}
+        <Box
           sx={{
-            marginBottom: '20px',
-            '& .MuiOutlinedInput-root': {
-              borderRadius: '12px',
-              fontFamily: "'Kanit', sans-serif",
-              '& fieldset': {
-                borderColor: primaryColor,
-              },
-              '&:hover fieldset': {
-                borderColor: primaryColor,
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: primaryColor,
-              },
-            },
-            '& .MuiInputLabel-root': {
-              fontFamily: "'Kanit', sans-serif",
-              color: primaryColor,
-              '&.Mui-focused': {
-                color: primaryColor,
-              },
-            },
+            background: `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`,
+            padding: '24px',
+            textAlign: 'center',
           }}
-        />
-        <Button
-          fullWidth
-          variant="contained"
-          onClick={handleGenerateClick}
-          sx={buttonStyle}
         >
-          สร้าง QR Code
-        </Button>
-
-        <Box className="flex justify-center mb-6">
-          <ToggleButtonGroup
-            value={qrSize}
-            exclusive
-            onChange={handleSizeChange}
-            aria-label="QR code size"
-            style={{
-              display: 'flex',
-              width: '100%',
-              maxWidth: '300px',
-            }}
-          >
-            {[
-              { value: 'small', label: 'เล็ก' },
-              { value: 'medium', label: 'กลาง' },
-              { value: 'large', label: 'ใหญ่' }
-            ].map(({ value, label }) => (
-              <ToggleButton
-                key={value}
-                value={value}
-                aria-label={value}
-                sx={{
-                  flex: 1,
-                  borderRadius: '8px',
-                  color: qrSize === value ? primaryColor : textColor,
-                  backgroundColor: qrSize === value ? secondaryColor : primaryColor,
-                  transition: 'all 0.3s ease',
-                  fontWeight: 'bold',
-                  border: `1px solid ${primaryColor}`,
-                  padding: '8px 0',
-                  minWidth: 0,
-                  fontFamily: "'Kanit', sans-serif",
-                  '&:hover': {
-                    backgroundColor: qrSize === value ? secondaryColor : `${primaryColor}CC`,
-                    boxShadow: `0 2px 4px ${primaryColor}4D`,
-                  },
-                }}
-              >
-                {label}
-              </ToggleButton>
-            ))}
-          </ToggleButtonGroup>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, mb: 1 }}>
+            <QrCode2Icon sx={{ color: '#fff', fontSize: 32 }} />
+            <Typography
+              variant="h5"
+              sx={{
+                color: '#fff',
+                fontWeight: 600,
+                fontFamily: "'Kanit', sans-serif",
+                letterSpacing: '0.5px',
+              }}
+            >
+              QR Code Generator
+            </Typography>
+          </Box>
+      
         </Box>
 
-        <Box className="flex justify-center items-center mb-6">
-          <Tooltip title="เลือกสี QR Code" arrow>
-            <IconButton
-              onClick={() => document.getElementById('colorPicker').click()}
+        {/* Content */}
+        <Box sx={{ padding: '24px' }}>
+          <TextField
+            fullWidth
+            label="กรอก URL หรือข้อความ"
+            variant="outlined"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            sx={{
+              marginBottom: '16px',
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '8px',
+                fontFamily: "'Kanit', sans-serif",
+                backgroundColor: '#fafbfc',
+                '& fieldset': {
+                  borderColor: '#d1d5db',
+                },
+                '&:hover fieldset': {
+                  borderColor: accentColor,
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: primaryColor,
+                  borderWidth: '2px',
+                },
+              },
+              '& .MuiInputLabel-root': {
+                fontFamily: "'Kanit', sans-serif",
+                color: textSecondary,
+                '&.Mui-focused': {
+                  color: primaryColor,
+                },
+              },
+            }}
+          />
+
+          <Button
+            fullWidth
+            variant="contained"
+            onClick={handleGenerateClick}
+            sx={{
+              borderRadius: '8px',
+              padding: '12px',
+              backgroundColor: primaryColor,
+              color: '#fff',
+              fontFamily: "'Kanit', sans-serif",
+              fontWeight: 600,
+              fontSize: '16px',
+              textTransform: 'none',
+              marginBottom: '20px',
+              boxShadow: '0 2px 8px rgba(30, 58, 95, 0.3)',
+              transition: 'all 0.2s ease',
+              '&:hover': {
+                backgroundColor: secondaryColor,
+                boxShadow: '0 4px 12px rgba(30, 58, 95, 0.4)',
+                transform: 'translateY(-1px)',
+              },
+            }}
+          >
+            สร้าง QR Code
+          </Button>
+
+          {/* Size Options */}
+          <Box sx={{ mb: 3 }}>
+            <Typography
+              variant="body2"
               sx={{
-                color: primaryColor,
-                '&:hover': {
-                  backgroundColor: `${secondaryColor}4D`,
+                color: textSecondary,
+                fontFamily: "'Kanit', sans-serif",
+                mb: 1,
+                fontWeight: 500,
+              }}
+            >
+              ขนาด QR Code
+            </Typography>
+            <ToggleButtonGroup
+              value={qrSize}
+              exclusive
+              onChange={handleSizeChange}
+              aria-label="QR code size"
+              sx={{
+                display: 'flex',
+                width: '100%',
+                '& .MuiToggleButton-root': {
+                  flex: 1,
+                  borderColor: '#d1d5db',
+                  color: textSecondary,
+                  fontFamily: "'Kanit', sans-serif",
+                  fontWeight: 500,
+                  textTransform: 'none',
+                  '&.Mui-selected': {
+                    backgroundColor: primaryColor,
+                    color: '#fff',
+                    borderColor: primaryColor,
+                    '&:hover': {
+                      backgroundColor: secondaryColor,
+                    },
+                  },
+                  '&:hover': {
+                    backgroundColor: '#f3f4f6',
+                  },
                 },
               }}
             >
-              <ColorLensIcon />
-            </IconButton>
-          </Tooltip>
-          <input
-            id="colorPicker"
-            type="color"
-            value={qrColor}
-            onChange={(e) => setQrColor(e.target.value)}
-            style={{ display: 'none' }}
-          />
-          <Typography variant="body2" style={{ marginLeft: '10px', fontFamily: "'Kanit', sans-serif", color: primaryColor }}>
-            สีที่เลือก:
-          </Typography>
-          <Box
-            sx={{
-              width: '20px',
-              height: '20px',
-              backgroundColor: qrColor,
-              marginLeft: '5px',
-              border: '1px solid #000',
-              borderRadius: '4px'
-            }}
-          />
-        </Box>
+              <ToggleButton value="small">เล็ก</ToggleButton>
+              <ToggleButton value="medium">กลาง</ToggleButton>
+              <ToggleButton value="large">ใหญ่</ToggleButton>
+            </ToggleButtonGroup>
+          </Box>
 
-        {qrCode && (
-          <Box className="flex justify-center mb-6">
-            <Box
-              className="relative"
-              style={{
-                background: 'white',
-                borderRadius: '16px',
-                padding: '50px',
-                boxShadow: `0 4px 20px ${primaryColor}4D`,
-                border: `1px solid ${primaryColor}`,
+          {/* Color Picker */}
+          <Box sx={{ mb: 3 }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: textSecondary,
+                fontFamily: "'Kanit', sans-serif",
+                mb: 1.5,
+                fontWeight: 500,
               }}
             >
-              <QRCodeSVG id="qr-code" value={qrCode} size={getQrSize()} fgColor={qrColor} className="rounded-lg" />
-              <Box className="absolute top-2 right-2 flex space-x-2">
-                <Tooltip title="คัดลอก URL" arrow>
-                  <IconButton
-                    onClick={handleCopyClick}
-                    size="small"
+              สี QR Code
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center' }}>
+              {[
+                { color: '#000000', name: 'ดำ' },
+                { color: '#1e3a5f', name: 'น้ำเงินเข้ม' },
+                { color: '#0066cc', name: 'น้ำเงิน' },
+                { color: '#059669', name: 'เขียว' },
+                { color: '#dc2626', name: 'แดง' },
+                { color: '#7c3aed', name: 'ม่วง' },
+                { color: '#ea580c', name: 'ส้ม' },
+                { color: '#0891b2', name: 'ฟ้า' },
+              ].map(({ color, name }) => (
+                <Tooltip key={color} title={name} arrow>
+                  <Box
+                    onClick={() => setQrColor(color)}
                     sx={{
-                      backgroundColor: secondaryColor,
-                      color: primaryColor,
+                      width: '36px',
+                      height: '36px',
+                      backgroundColor: color,
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      border: qrColor === color ? '3px solid #4a90d9' : '2px solid #e5e7eb',
+                      transition: 'all 0.2s ease',
+                      boxShadow: qrColor === color ? '0 0 0 2px rgba(74, 144, 217, 0.3)' : 'none',
                       '&:hover': {
-                        backgroundColor: primaryColor,
-                        color: textColor,
+                        transform: 'scale(1.1)',
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
                       },
                     }}
-                  >
-                    <ContentCopyIcon fontSize="small" />
-                  </IconButton>
+                  />
                 </Tooltip>
-                <Tooltip title="ดาวน์โหลด QR Code" arrow>
-                  <IconButton
-                    onClick={handleDownload}
-                    size="small"
-                    sx={{
-                      backgroundColor: secondaryColor,
-                      color: primaryColor,
-                      '&:hover': {
-                        backgroundColor: primaryColor,
-                        color: textColor,
-                      },
-                    }}
-                  >
-                    <DownloadIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-              </Box>
+              ))}
+              {/* Custom Color Picker */}
+              <Tooltip title="เลือกสีเอง" arrow>
+                <Box
+                  onClick={() => document.getElementById('colorPicker').click()}
+                  sx={{
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    border: '2px dashed #d1d5db',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.2s ease',
+                    backgroundColor: '#fafbfc',
+                    '&:hover': {
+                      borderColor: primaryColor,
+                      backgroundColor: '#f0f4f8',
+                    },
+                  }}
+                >
+                  <ColorLensIcon sx={{ fontSize: 18, color: textSecondary }} />
+                </Box>
+              </Tooltip>
+              <input
+                id="colorPicker"
+                type="color"
+                value={qrColor}
+                onChange={(e) => setQrColor(e.target.value)}
+                style={{ display: 'none' }}
+              />
             </Box>
           </Box>
-        )}
+
+          {/* QR Code Display */}
+          {qrCode && (
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                mb: 2,
+              }}
+            >
+              <Box
+                sx={{
+                  position: 'relative',
+                  background: '#fff',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  border: '1px solid #e5e7eb',
+                  boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)',
+                }}
+              >
+                <QRCodeSVG
+                  id="qr-code"
+                  value={qrCode}
+                  size={getQrSize()}
+                  fgColor={qrColor}
+                  style={{ display: 'block' }}
+                />
+
+                {/* Action Buttons */}
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    gap: 1,
+                    mt: 2,
+                    pt: 2,
+                    borderTop: '1px solid #e5e7eb',
+                  }}
+                >
+                  <Tooltip title="คัดลอก URL" arrow>
+                    <IconButton
+                      onClick={handleCopyClick}
+                      size="small"
+                      sx={{
+                        backgroundColor: '#f3f4f6',
+                        color: textSecondary,
+                        '&:hover': {
+                          backgroundColor: primaryColor,
+                          color: '#fff',
+                        },
+                      }}
+                    >
+                      <ContentCopyIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="ดาวน์โหลด QR Code" arrow>
+                    <IconButton
+                      onClick={handleDownload}
+                      size="small"
+                      sx={{
+                        backgroundColor: '#f3f4f6',
+                        color: textSecondary,
+                        '&:hover': {
+                          backgroundColor: primaryColor,
+                          color: '#fff',
+                        },
+                      }}
+                    >
+                      <DownloadIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+              </Box>
+            </Box>
+          )}
+        </Box>
       </Box>
+
       <Snackbar
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         open={openSnackbar}
@@ -307,12 +389,12 @@ function App() {
         onClose={() => setOpenSnackbar(false)}
         message={snackbarMessage}
         ContentProps={{
-          style: {
-            background: secondaryColor,
-            color: primaryColor,
-            fontWeight: 'bold',
+          sx: {
+            backgroundColor: primaryColor,
+            color: '#fff',
+            fontWeight: 500,
             borderRadius: '8px',
-            padding: '10px 20px',
+            padding: '8px 16px',
             fontFamily: "'Kanit', sans-serif",
           }
         }}
