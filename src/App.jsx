@@ -89,9 +89,11 @@ function App() {
     const ctx = canvas.getContext('2d');
     const img = new Image();
     img.onload = async () => {
-      canvas.width = img.width;
-      canvas.height = img.height;
-      ctx.drawImage(img, 0, 0);
+      const scale = 4;
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+      ctx.imageSmoothingEnabled = false;
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
       // ใช้ Web Share API เฉพาะ iOS Safari เพื่อบันทึกไปที่รูปภาพ
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
